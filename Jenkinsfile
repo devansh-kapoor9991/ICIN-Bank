@@ -1,51 +1,44 @@
 pipeline {
-    agent any 
-
-    triggers {
-        pollSCM('* * * * *')
-    }
-    // Got permission denied while trying to connect to the Docker daemon socket at unix.
-    // sudo usermod -a -G docker jenkins
-    // restart jenkins server ->  sudo service jenkins restart
+    agent any
     stages {
-        
-        stage('Maven Compile') {
-            steps {
-                echo '----------------- This is a compile phase ----------'
-                sh 'mvn clean compile'
+        stage('Maven Validate') {
+             steps {
+                echo 'Maven Validate .....'
             }
         }
-        
-        
-        
+        stage('Maven Compile') {
+             steps {
+                echo 'Maven Compile .....'
+            }
+        }
+
+        stage('Maven Test') {
+             steps {
+                echo 'Maven Test .....'
+            }
+        }
+
         stage('Maven Build') {
              steps {
-                echo '----------------- This is a build phase ----------'
-                sh 'mvn clean package -DskipTests'
+                echo 'Maven Build .....'
             }
         }
 
         stage('Docker Build') {
-            steps {
-                echo '----------------- This is a build docker image phase ----------'
-                sh '''
-                    docker image build -t icin-bank .
-                '''
+             steps {
+                echo 'Build Docker Image .....'
             }
         }
 
         stage('Docker Deploy') {
-            steps {
-                echo '----------------- This is a docker deploment phase ----------'
-                sh '''
-                 (if  [ $(docker ps -a | grep icin-bank | cut -d " " -f1) ]; then \
-                        echo $(docker rm -f icin-bank); \
-                        echo "---------------- successfully removed icin-bank ----------------"
-                     else \
-                    echo OK; \
-                 fi;);
-            docker container run --restart always --name icin-bank -p 8081:6060 -d icin-bank
-            '''
+             steps {
+                echo 'Build Docker Image .....'
+            }
+        }
+
+        stage('Docker Publish') {
+             steps {
+                echo 'Build Docker Image .....'
             }
         }
     }
